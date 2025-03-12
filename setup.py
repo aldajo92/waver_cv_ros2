@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'cv_listener = waver_cv.subscriber:main',
+            'simple_sub_pub = waver_cv.simple_sub_pub:main',
         ],
     },
 )
