@@ -32,4 +32,6 @@ qtcreator-*
 COLCON_IGNORE
 AMENT_IGNORE
 
+.DS_Store
+
 # End of https://www.toptal.com/developers/gitignore/api/ros2

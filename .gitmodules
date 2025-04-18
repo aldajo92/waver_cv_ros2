@@ -1,0 +1,4 @@
+[submodule "ros2_ws/src/waver_cv"]
+	path = ros2_ws/src/waver_cv
+	url = https://github.com/aldajo92/waver_cv_ros2.git
+	branch = main
