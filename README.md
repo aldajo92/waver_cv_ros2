@@ -3,3 +3,9 @@
 This is a docker project template to work with ROS2 humble.
 
 Autor: [Alejandro Daniel Jose Gomez Florez](https://www.linkedin.com/in/aldajo92/)
+
+## Get submodules
+~~~bash
+git submodule update --init --remote --recursive
+~~~
+
