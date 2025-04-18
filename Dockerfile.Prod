@@ -1,5 +1,5 @@
 FROM ros:humble-ros-base-jammy
-ENV ROS_DISTRO humble
+ENV ROS_DISTRO=humble
 
 RUN apt update && apt install -y \
     python3-rosinstall \
@@ -61,16 +61,17 @@ RUN git clone https://github.com/RobotWebTools/web_video_server.git /camera_ws/s
 RUN bash -c "cd /camera_ws/ && source /opt/ros/humble/setup.bash && rosdep install --from-paths src --ignore-src --skip-keys=libcamera -y"
 RUN bash -c "cd /camera_ws/ && source /opt/ros/humble/setup.bash && colcon build"
 
-
 ######### End camera configuration #########
 
+RUN mkdir -p /ros2_ws
+COPY ./ros2_ws/src /ros2_ws/src
+WORKDIR /ros2_ws
+
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
-RUN echo "alias sros2='source /opt/ros/humble/setup.bash && source /camera_ws/install/setup.bash'" >> ~/.bashrc
-RUN echo "alias bros2='cd /ros2_ws && source /camera_ws/install/setup.bash && colcon build'" >> ~/.bashrc
+RUN echo "source /ros2_ws/install/setup.bash" >> ~/.bashrc
+RUN echo "source /camera_ws/install/setup.bash" >> ~/.bashrc
 
+RUN echo "alias bros2='cd /ros2_ws/ && source /camera_ws/install/setup.bash && source /opt/ros/humble/setup.bash && colcon build && source /camera_ws/install/setup.bash && source /ros2_ws/install/setup.bash'" >> ~/.bashrc
+RUN echo "alias sros2='source /opt/ros/humble/setup.bash && source /camera_ws/install/setup.bash && source /ros2_ws/install/setup.bash'" >> ~/.bashrc
 
-
-# COPY ./autostart.sh /autostart.sh
-# RUN chmod +x /autostart.sh
-
-# ENTRYPOINT [ "/autostart.sh" ]
+# ENTRYPOINT [ "/ros_entrypoint.sh" ]
