@@ -8,15 +8,16 @@ from ament_index_python.packages import get_package_share_directory
 import os
 
 def generate_launch_description():
-    camera_launch_file = os.path.join(
-        FindPackageShare('camera_ros').find('camera_ros'),
-        'launch',
-        'camera.launch.py'
-    )
     return LaunchDescription([
         # Node for the web camera: ros2 launch camera_ros camera.launch.py width:=640 height:=480 format:=BGR888
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([camera_launch_file]),
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution([
+                    FindPackageShare('camera_ros'),
+                    'launch',
+                    'camera.launch.py'
+                ])
+            ),
             launch_arguments={
                 'width': '640',
                 'height': '480',

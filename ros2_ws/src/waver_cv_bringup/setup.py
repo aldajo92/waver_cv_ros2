@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 import os
 from glob import glob
 
-package_name = 'ros_cv_bringup'
+package_name = 'waver_cv_bringup'
 
 setup(
     name=package_name,
