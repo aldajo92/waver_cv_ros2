@@ -1,5 +1,5 @@
 FROM ros:humble-ros-base-jammy
-ENV ROS_DISTRO humble
+ENV ROS_DISTRO=humble
 
 RUN apt update && apt install -y \
     python3-rosinstall \
@@ -48,7 +48,7 @@ RUN meson setup libcamera/build libcamera/
 RUN ninja -C libcamera/build/ install
 
 # Add the new installations to the python path so that picamera2 can find them
-ENV PYTHONPATH=${PYTHONPATH}:/usr/local/lib/aarch64-linux-gnu/python3.10/site-packages:/app/kmsxx/build/py
+ENV PYTHONPATH=/usr/local/lib/aarch64-linux-gnu/python3.10/site-packages:/app/kmsxx/build/py
 
 # Finally install picamera2 using pip
 RUN pip3 install picamera2
@@ -63,14 +63,21 @@ RUN bash -c "cd /camera_ws/ && source /opt/ros/humble/setup.bash && colcon build
 
 
 ######### End camera configuration #########
+
+# Clone and build ros2_shared (required by gscam2)
+RUN mkdir -p /ros2_shared_ws/src
+RUN git clone https://github.com/ptrmu/ros2_shared.git /ros2_shared_ws/src/ros2_shared -b master
+RUN bash -c "cd /ros2_shared_ws && source /opt/ros/humble/setup.bash && colcon build"
+
+# Build main workspace
 COPY ./ros2_ws /ros2_ws
 WORKDIR /ros2_ws
-RUN bash -c "source /opt/ros/humble/setup.bash && rosdep install --from-paths src --ignore-src --skip-keys=libcamera -y"
-RUN bash -c "source /opt/ros/humble/setup.bash && colcon build"
+RUN bash -c "source /opt/ros/humble/setup.bash && rosdep install --from-paths src --ignore-src --skip-keys='libcamera ros2_shared' -y"
+RUN bash -c "source /opt/ros/humble/setup.bash && source /ros2_shared_ws/install/setup.bash && colcon build"
 
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
-RUN echo "alias sros2='source /opt/ros/humble/setup.bash && source /camera_ws/install/setup.bash && source /ros2_ws/install/setup.bash'" >> ~/.bashrc
-RUN echo "alias bros2='cd /ros2_ws && source /opt/ros/humble/setup.bash && source /camera_ws/install/setup.bash && colcon build'" >> ~/.bashrc
+RUN echo "alias sros2='source /opt/ros/humble/setup.bash && source /ros2_shared_ws/install/setup.bash && source /camera_ws/install/setup.bash && source /ros2_ws/install/setup.bash'" >> ~/.bashrc
+RUN echo "alias bros2='cd /ros2_ws && source /opt/ros/humble/setup.bash && source /ros2_shared_ws/install/setup.bash && source /camera_ws/install/setup.bash && colcon build'" >> ~/.bashrc
 
 # COPY ./autostart.sh /autostart.sh
 # RUN chmod +x /autostart.sh
