@@ -13,7 +13,9 @@ docker run -it \
   --volume /dev/:/dev \
   --volume /run/udev:/run/udev \
   --rm \
-  ${DOCKER_IMAGE_NAME} /bin/bash
+  ${DOCKER_IMAGE_NAME} /bin/bash -c "\
+    source /ros2_ws/install/setup.bash && \
+    ros2 launch waver_cv_bringup main.launch.py"
 
 echo "executing the command: docker run -it --privileged --name=${DOCKER_CONTAINER_NAME} --network ${DOCKER_NETWORK} --volume ${PROJECT_ROOT}/ros2_ws:/ros2_ws --volume /dev/:/dev --volume /run/udev:/run/udev --rm ${DOCKER_IMAGE_NAME} /bin/bash"
 

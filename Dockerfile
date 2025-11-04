@@ -63,9 +63,12 @@ RUN bash -c "cd /camera_ws/ && source /opt/ros/humble/setup.bash && colcon build
 
 
 ######### End camera configuration #########
+COPY ./ros2_ws /ros2_ws
+WORKDIR /ros2_ws
+RUN bash -c "source /opt/ros/humble/setup.bash && colcon build"
 
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
-RUN echo "alias sros2='source /opt/ros/humble/setup.bash && source /camera_ws/install/setup.bash'" >> ~/.bashrc
+RUN echo "alias sros2='source /opt/ros/humble/setup.bash && source /camera_ws/install/setup.bash && source /ros2_ws/install/setup.bash'" >> ~/.bashrc
 RUN echo "alias bros2='cd /ros2_ws && source /opt/ros/humble/setup.bash && source /camera_ws/install/setup.bash && colcon build'" >> ~/.bashrc
 
 # COPY ./autostart.sh /autostart.sh
