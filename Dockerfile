@@ -65,6 +65,7 @@ RUN bash -c "cd /camera_ws/ && source /opt/ros/humble/setup.bash && colcon build
 ######### End camera configuration #########
 COPY ./ros2_ws /ros2_ws
 WORKDIR /ros2_ws
+RUN bash -c "source /opt/ros/humble/setup.bash && rosdep install --from-paths src --ignore-src --skip-keys=libcamera -y"
 RUN bash -c "source /opt/ros/humble/setup.bash && colcon build"
 
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
