@@ -2,3 +2,6 @@
 	path = ros2_ws/src/waver_cv
 	url = https://github.com/aldajo92/waver_cv_ros2.git
 	branch = main
+[submodule "ros2_ws/src/gscam2"]
+	path = ros2_ws/src/gscam2
+	url = https://github.com/clydemcqueen/gscam2.git
