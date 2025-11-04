@@ -32,8 +32,9 @@ def generate_launch_description():
     camera_name = 'rpi_camera'
     camera_frame = 'rpi_camera_frame'
     
-    # GStreamer pipeline for Raspberry Pi camera using libcamera
-    gscam_config = 'libcamerasrc ! video/x-raw,width=640,height=480,format=BGR ! videoconvert'
+    # GStreamer pipeline for Raspberry Pi camera using v4l2
+    # videoflip method=5 flips the image vertically
+    gscam_config = 'v4l2src device=/dev/video0 ! video/x-raw,width=640,height=480 ! videoflip method=5 ! videoconvert ! video/x-raw,format=RGB'
     
     return LaunchDescription([
         stream_port_arg,
@@ -58,8 +59,8 @@ def generate_launch_description():
                 }
             ],
             remappings=[
-                ('image_raw', '/image_raw'),
-                ('camera_info', '/camera_info'),
+                ('image_raw', '/camera/image_raw'),
+                ('camera_info', '/camera/camera_info'),
             ],
         ),
         
@@ -71,7 +72,7 @@ def generate_launch_description():
             name='gstreamer_streamer',
             parameters=[
                 {
-                    'input_topic': '/image_raw',
+                    'input_topic': '/camera/image_raw',
                     'host': '0.0.0.0',
                     'port': stream_port,
                     'encoding': stream_encoding,

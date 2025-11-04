@@ -3,12 +3,14 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     # Camera configuration
-    camera_name = 'rpi_camera'
-    camera_frame = 'rpi_camera_frame'
+    camera_name = 'usb_webcam'
+    camera_frame = 'usb_webcam_frame'
     
-    # GStreamer pipeline for Raspberry Pi camera using libcamera
-    # This uses libcamerasrc which works with the libcamera stack you built in Docker
-    gscam_config = 'libcamerasrc ! video/x-raw,width=640,height=480,format=BGR ! videoconvert'
+    # GStreamer pipeline for USB webcam (Logitech C920)
+    # Uses v4l2src to access camera via /dev/video0
+    # gscam_config = 'v4l2src device=/dev/video0 ! video/x-raw,width=640,height=480 ! videoconvert ! video/x-raw,format=RGB'
+    gscam_config = 'v4l2src device=/dev/video0 ! video/x-raw,width=640,height=480 ! videoconvert ! edgetv ! videoconvert ! video/x-raw,format=RGB'
+    
     
     return LaunchDescription([
         # Node for gscam2 with Raspberry Pi camera
@@ -29,15 +31,9 @@ def generate_launch_description():
                 }
             ],
             remappings=[
-                ('image_raw', '/image_raw'),
-                ('camera_info', '/camera_info'),
+                ('image_raw', '/camera/image_raw'),
+                ('camera_info', '/camera/camera_info'),
             ],
-        ),
-        # Node for the simple subscriber and publisher using OpenCV
-        Node(
-            package='waver_cv',
-            executable='simple_sub_pub',
-            name='simple_sub_pub_node',
         ),
         # Node for the web video server
         Node(

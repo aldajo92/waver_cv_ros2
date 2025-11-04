@@ -54,8 +54,17 @@ RUN apt update && apt install -y --no-install-recommends \
     && rm -rf /var/cache/apt/archives/* \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt update && apt install -y \
+    libglib2.0-dev \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    && apt-get clean \
+    && apt-get autoremove \
+    && rm -rf /var/cache/apt/archives/* \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN git clone https://github.com/raspberrypi/libcamera.git /libcamera && cd /libcamera && git checkout 6ddd79b && cd /
-RUN meson setup libcamera/build libcamera/
+RUN meson setup libcamera/build libcamera/ -Dgstreamer=enabled
 RUN ninja -C libcamera/build/ install
 
 # Add the new installations to the python path so that picamera2 can find them

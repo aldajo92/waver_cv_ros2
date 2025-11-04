@@ -15,13 +15,14 @@ def generate_launch_description():
     framerate = LaunchConfiguration('framerate')
     
     # Camera configuration
-    camera_name = 'rpi_camera'
-    camera_frame = 'rpi_camera_frame'
+    camera_name = 'usb_webcam'
+    camera_frame = 'usb_webcam_frame'
     
-    # GStreamer pipeline for Raspberry Pi camera using libcamera
-    # Format: libcamerasrc ! video/x-raw,width=W,height=H,framerate=F/1,format=BGR ! videoconvert
+    # GStreamer pipeline for USB webcam (Logitech C920) - HD resolution
+    # Uses v4l2src to access camera via /dev/video0
+    # videoflip method=2 rotates 180 degrees
     # Note: LaunchConfiguration doesn't support f-strings directly, so we use a fixed HD resolution
-    gscam_config = 'libcamerasrc ! video/x-raw,width=1280,height=720,framerate=30/1,format=BGR ! videoconvert'
+    gscam_config = 'v4l2src device=/dev/video0 ! video/x-raw,width=1280,height=720,framerate=30/1 ! videoflip method=2 ! videoconvert ! video/x-raw,format=RGB'
     
     return LaunchDescription([
         width_arg,
@@ -46,8 +47,8 @@ def generate_launch_description():
                 }
             ],
             remappings=[
-                ('image_raw', '/image_raw'),
-                ('camera_info', '/camera_info'),
+                ('image_raw', '/camera/image_raw'),
+                ('camera_info', '/camera/camera_info'),
             ],
         ),
         # Node for the simple subscriber and publisher using OpenCV
