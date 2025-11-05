@@ -29,9 +29,9 @@ docker run -it \
     source /opt/ros/humble/setup.bash && \
     source /ros2_shared_ws/install/setup.bash && \
     source /ros2_ws/install/setup.bash && \
-    ros2 launch waver_cv_bringup main_gscam.launch.py"
+    ros2 launch waver_cv_bringup mediapipe_hands.launch.py"
 
 # Alternative launch commands:
-# ros2 launch waver_cv_bringup mediapipe_face.launch.py  # MediaPipe face detection (current)
-# ros2 launch waver_cv_bringup main.launch.py            # camera_ros (simple)
-# ros2 launch waver_cv_bringup main_gscam.launch.py      # gscam2 with edge detection
+# ros2 launch waver_cv_bringup mediapipe_hands.launch.py # MediaPipe hand tracking (current)
+# ros2 launch waver_cv_bringup mediapipe_face.launch.py  # MediaPipe face detection
+# ros2 launch waver_cv_bringup main_gscam.launch.py      # gscam2 with OpenCV face (C++)
