@@ -54,33 +54,8 @@ RUN apt update && apt install -y --no-install-recommends \
     && rm -rf /var/cache/apt/archives/* \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt update && apt install -y \
-    libglib2.0-dev \
-    libgstreamer1.0-dev \
-    libgstreamer-plugins-base1.0-dev \
-    && apt-get clean \
-    && apt-get autoremove \
-    && rm -rf /var/cache/apt/archives/* \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN git clone https://github.com/raspberrypi/libcamera.git /libcamera && cd /libcamera && git checkout 6ddd79b && cd /
-RUN meson setup libcamera/build libcamera/ -Dgstreamer=enabled
-RUN ninja -C libcamera/build/ install
-
-# Add the new installations to the python path so that picamera2 can find them
-ENV PYTHONPATH=/usr/local/lib/aarch64-linux-gnu/python3.10/site-packages:/app/kmsxx/build/py
-
-# Finally install picamera2 using pip
-RUN pip3 install picamera2
-
-RUN apt update && apt install pkg-config python3-yaml python3-ply python3-jinja2 openssl libyaml-dev libssl-dev libudev-dev libatomic1 meson -y
-RUN mkdir -p /camera_ws/src
-RUN git clone https://github.com/christianrauch/camera_ros.git /camera_ws/src/camera_ros
-RUN git clone https://github.com/RobotWebTools/web_video_server.git /camera_ws/src/web_video_server
-
-RUN bash -c "cd /camera_ws/ && source /opt/ros/humble/setup.bash && rosdep install --from-paths src --ignore-src --skip-keys=libcamera -y"
-RUN bash -c "cd /camera_ws/ && source /opt/ros/humble/setup.bash && colcon build"
-
+# Install web_video_server for viewing camera feed in browser
+RUN apt update && apt install -y ros-humble-web-video-server
 
 ######### End camera configuration #########
 
@@ -92,12 +67,21 @@ RUN bash -c "cd /ros2_shared_ws && source /opt/ros/humble/setup.bash && colcon b
 # Build main workspace
 COPY ./ros2_ws /ros2_ws
 WORKDIR /ros2_ws
+
+# Build OpenCV face detection GStreamer plugin
+RUN apt update && apt install -y cmake libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+RUN cd /ros2_ws/gst_mediapipe_plugin && \
+    mkdir -p build && cd build && \
+    cmake .. && \
+    make && \
+    make install
+
 RUN bash -c "source /opt/ros/humble/setup.bash && rosdep install --from-paths src --ignore-src --skip-keys='libcamera ros2_shared' -y"
 RUN bash -c "source /opt/ros/humble/setup.bash && source /ros2_shared_ws/install/setup.bash && colcon build"
 
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
-RUN echo "alias sros2='source /opt/ros/humble/setup.bash && source /ros2_shared_ws/install/setup.bash && source /camera_ws/install/setup.bash && source /ros2_ws/install/setup.bash'" >> ~/.bashrc
-RUN echo "alias bros2='cd /ros2_ws && source /opt/ros/humble/setup.bash && source /ros2_shared_ws/install/setup.bash && source /camera_ws/install/setup.bash && colcon build'" >> ~/.bashrc
+RUN echo "alias sros2='source /opt/ros/humble/setup.bash && source /ros2_shared_ws/install/setup.bash && source /ros2_ws/install/setup.bash'" >> ~/.bashrc
+RUN echo "alias bros2='cd /ros2_ws && source /opt/ros/humble/setup.bash && source /ros2_shared_ws/install/setup.bash && colcon build'" >> ~/.bashrc
 
 # COPY ./autostart.sh /autostart.sh
 # RUN chmod +x /autostart.sh

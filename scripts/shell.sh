@@ -20,7 +20,6 @@ docker run -it \
   ${DOCKER_IMAGE_NAME} /bin/bash -c "\
     source /opt/ros/humble/setup.bash && \
     source /ros2_shared_ws/install/setup.bash && \
-    source /camera_ws/install/setup.bash && \
     source /ros2_ws/install/setup.bash && \
     exec /bin/bash"
 
