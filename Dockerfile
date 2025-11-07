@@ -66,13 +66,13 @@ RUN bash -c "cd /ros2_shared_ws && source /opt/ros/humble/setup.bash && colcon b
 
 # Install MediaPipe and dependencies
 RUN pip3 install --upgrade pip && pip3 install mediapipe opencv-python numpy
+RUN apt update && apt install -y cmake libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev python3-gst-1.0
 
 # Build main workspace
 COPY ./ros2_ws /ros2_ws
 WORKDIR /ros2_ws
 
 # Build OpenCV face detection GStreamer plugin  
-RUN apt update && apt install -y cmake libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev python3-gst-1.0
 RUN cd /ros2_ws/gst_mediapipe_plugin && \
     mkdir -p build && cd build && \
     cmake .. && \

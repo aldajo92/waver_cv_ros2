@@ -24,6 +24,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'gst_mediapipe_face = waver_cv_bringup.gst_mediapipe_face:main',
+            'gst_mediapipe_hands = waver_cv_bringup.gst_mediapipe_hands:main',
+            'gst_optical_flow = waver_cv_bringup.gst_optical_flow:main',
+            'gst_sparse_optical_flow = waver_cv_bringup.gst_sparse_optical_flow:main',
         ],
     },
 )
