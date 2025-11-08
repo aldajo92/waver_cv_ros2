@@ -7,8 +7,8 @@ def generate_launch_description():
     camera_frame = 'usb_webcam_frame'
     
     # GStreamer pipeline for USB webcam (Logitech C920)
-    # Simple pipeline - just capture and convert
-    gscam_config = 'v4l2src device=/dev/video0 ! video/x-raw,width=640,height=480,framerate=30/1 ! videoconvert ! video/x-raw,format=RGB,framerate=30/1'
+    # OpenCV optical flow in GStreamer (C++ plugin) - smaller resolution for speed
+    gscam_config = 'v4l2src device=/dev/video0 ! video/x-raw,width=320,height=240,framerate=30/1 ! videoconvert ! video/x-raw,format=RGB ! opencvoptflow ! videoconvert ! video/x-raw,format=RGB'
     
     
     return LaunchDescription([

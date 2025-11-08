@@ -72,8 +72,14 @@ RUN apt update && apt install -y cmake libopencv-dev libgstreamer1.0-dev libgstr
 COPY ./ros2_ws /ros2_ws
 WORKDIR /ros2_ws
 
-# Build OpenCV face detection GStreamer plugin  
+# Build OpenCV GStreamer plugins (face detection + optical flow)
 RUN cd /ros2_ws/gst_mediapipe_plugin && \
+    mkdir -p build && cd build && \
+    cmake .. && \
+    make && \
+    make install
+
+RUN cd /ros2_ws/gst_opencv_optflow && \
     mkdir -p build && cd build && \
     cmake .. && \
     make && \
