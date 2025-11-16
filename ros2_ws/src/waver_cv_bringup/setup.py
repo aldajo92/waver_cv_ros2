@@ -28,6 +28,7 @@ setup(
             'gst_mediapipe_hands = waver_cv_bringup.gst_mediapipe_hands:main',
             'gst_optical_flow = waver_cv_bringup.gst_optical_flow:main',
             'gst_sparse_optical_flow = waver_cv_bringup.gst_sparse_optical_flow:main',
+            'gst_split_raw_optflow = waver_cv_bringup.gst_split_raw_optflow:main',
         ],
     },
 )
